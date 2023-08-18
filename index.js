@@ -56,7 +56,7 @@ app.get('/users/:id', (request, response) => {
         'GROUP BY users.id';
     dbConnect.query(sql, userId, (err, result, fields) => {
         if (err) {
-            response.status(500).json(commonResponse(null, "Server Error"))
+            response.status(500).json(commonResponse(null, "Server Have an Error"))
             response.end()
             return
         }
