@@ -21,11 +21,11 @@ const commonResponse = function (data, error) {
 
 
 const mysqlCon = mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DATABASE
+    host: process.env.MYSQL_HOST_PRODUCTION,
+    port: process.env.MYSQL_PORT_PRODUCTION,
+    user: process.env.MYSQL_USER_PRODUCTION,
+    password: process.env.MYSQL_PASS_PRODUCTION,
+    database: process.env.MYSQL_DATABASE_PRODUCTION
 });
 
 const mysqlConProduction = mysql.createConnection(
@@ -41,13 +41,7 @@ mysqlConProduction.connect((err) => {
     console.log("Database connected Railway")
 });
 
-const mysqlCondev = mysql.createConnection({
-    host: process.env.MYSQL_HOST_PRODUCTION,
-    port: process.env.MYSQL_PORT_PRODUCTION,
-    user: process.env.MYSQL_USER_PRODUCTION,
-    password: process.env.MYSQL_PASS_PRODUCTION,
-    database: process.env.MYSQL_DATABASE_PRODUCTION
-});
+
 
 mysqlCon.connect((err) => {
     if (err) { 
