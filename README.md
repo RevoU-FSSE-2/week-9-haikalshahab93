@@ -8,7 +8,6 @@ Next, you must download and install MySQL server for database management system 
 For the first we create a new connection on mysql server and database mysql on DBeaver.
 ![1-create-new-connection database](https://github.com/RevoU-FSSE-2)
 
-
 After this lets create a new table on database with DBeaver. We will use a relational model database on the table.
 so for the spesifik you can see this
 
@@ -40,7 +39,7 @@ table users
 
 ```sql
 -- INSERT DATA USERS QUERY
-INSERT INTO users (name, gender, address)
+INSERT INTO users (name, address)
 VALUES
     ('hai', '123 Main St'),
     ('haikal', '456 Elm St'),
@@ -87,8 +86,8 @@ const dbConnect = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: 'sfr030197',
-    database: 'week9'
+    password: '',
+    database: 'revoutugas-week9'
 });
 dbConnect.connect(err => {
     if (err) {
