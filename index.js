@@ -30,7 +30,7 @@ const mysqlCon = mysql.createConnection({
 
 const mysqlConProduction = mysql.createConnection(
     // `${process.env.MYSQL_RAILWAY}`
-    "mysql://root:qFGk998vGReqxZ4Z8tsC@containers-us-west-81.railway.app:7310/railway"
+    "mysql://root:PPAW8IBvRiQhELsCZDlO@containers-us-west-174.railway.app:7763/railway"
 );
 
 
