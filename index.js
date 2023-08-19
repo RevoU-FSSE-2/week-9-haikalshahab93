@@ -1,119 +1,214 @@
-import express from "express";
-import mysql from "mysql2";
-import bodyParser from "body-parser";
+const express = require('express')
+const mysql = require('mysql2')
+const bodyParser = require('body-parser')
+require('dotenv').config()
 
-const app = express();
-const port = 3000;
+const app = express()
+const port = process.env.PORT || 1999; 
 
-// Middleware
-app.use(bodyParser.json());
-
-// Create a MySQL connection pool
-const dbPool = mysql.createPool({
-  host: "containers-us-west-69.railway.app",
-  port: 7223,
-  user: "root",
-  password: "Iqcl5bTZ2ckLd2CuILUg",
-  database: "railway",
-});
-
-// Common Response
-const commonResponse = (data, error) => {
-  if (error) {
+const commonResponse = function (data, error) {
+    if (error) {
+        return {
+            success: false,
+            error: error
+        }
+    }
     return {
-      success: false,
-      error: error,
-    };
-  }
-  return {
-    success: true,
-    data: data,
-  };
+        success: true,
+        data: data
+    }
 };
 
-// GET /users/:id -> to get user information with specific balance and total expenses
-app.get("/users/:id", (req, res) => {
-  const userId = req.params.id;
-  const sql =
-    "SELECT users.id, name, address, " +
-    'SUM(CASE WHEN type="income" THEN amount ELSE 0 END) AS total_income, ' +
-    'SUM(CASE WHEN type="expense" THEN amount ELSE 0 END) AS total_expense ' +
-    "FROM users " +
-    "LEFT JOIN transactions ON users.id = transactions.user_id " +
-    "WHERE users.id = ? " +
-    "GROUP BY users.id";
-    
-  dbPool.query(sql, userId, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json(commonResponse(null, "Server Have an Error"));
-    }
-    
-    if (result.length === 0) {
-      return res.status(404).json(commonResponse(null, "User not found"));
-    }
 
-    const userData = {
-      id: result[0].id,
-      name: result[0].name,
-      address: result[0].address,
-      balance: result[0].total_income - result[0].total_expense,
-      expense: result[0].total_expense,
-    };
-    return res.status(200).json(commonResponse(userData, null));
-  });
+const mysqlCon = mysql.createConnection({
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASS,
+    database: process.env.MYSQL_DATABASE
 });
 
-// POST /transactions -> to add a new transaction
-app.post("/transactions", (req, res) => {
-  const { user_id, type, amount } = req.body;
-  const sql = "INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)";
-  
-  dbPool.query(sql, [user_id, type, amount], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json(commonResponse(null, "Server Have an Error"));
+const mysqlConProduction = mysql.createConnection(
+    // `${process.env.MYSQL_RAILWAY}`
+    "mysql://root:qFGk998vGReqxZ4Z8tsC@containers-us-west-81.railway.app:7310/railway"
+);
+
+
+mysqlConProduction.connect((err) => {
+    if (err) { 
+        throw err
     }
-    
-    return res.status(201).json({
-      message: "Transaction added successfully",
-      id: result.insertId,
-    });
-  });
+    console.log("Database connected Railway")
 });
 
-// PUT /transactions/:id -> to update a transaction
-app.put("/transactions/:id", (req, res) => {
-  const transactionId = req.params.id;
-  const { type, amount } = req.body;
-  const sql = "UPDATE transactions SET type = ?, amount = ? WHERE id = ?";
-  
-  dbPool.query(sql, [type, amount, transactionId], (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json(commonResponse(null, "Server Have an Error"));
-    }
-    
-    return res.status(200).json({ message: "Transaction updated successfully" });
-  });
+const mysqlCondev = mysql.createConnection({
+    host: process.env.MYSQL_HOST_PRODUCTION,
+    port: process.env.MYSQL_PORT_PRODUCTION,
+    user: process.env.MYSQL_USER_PRODUCTION,
+    password: process.env.MYSQL_PASS_PRODUCTION,
+    database: process.env.MYSQL_DATABASE_PRODUCTION
 });
 
-// DELETE /transactions/:id -> to delete a transaction
-app.delete("/transactions/:id", (req, res) => {
-  const transactionId = req.params.id;
-  const sql = "DELETE FROM transactions WHERE id = ?";
-  
-  dbPool.query(sql, [transactionId], (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json(commonResponse(null, "Server Have an Error"));
+mysqlCon.connect((err) => {
+    if (err) { 
+        return console.log(err)
     }
-    
-    return res.status(200).json({ message: "Transaction deleted successfully" });
-  });
+    console.log("Database connected dev")
 });
 
-// Start server
+// async function checkConnection() {
+//     try {
+//         const connection = await mysqlCon.connect();
+//         console.log("database connected")
+//     }
+//     catch (err){ 
+//         console.log(err)
+//     }
+// }
+
+// checkConnection()
+
+const query = (query, values) => {
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(query, values, (err, result, fields) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(result)
+            }
+        })
+    })
+}
+
+
+
+app.use(bodyParser.json())
+
+app.get('/user', (request, response) => {
+    console.log("masuk")
+    mysqlCon.query("select * from user", (err, result, fields) => {
+        if (err) {
+            console.error(err)
+            response.status(500).json({err: "server error"})
+            response.end()
+            return
+        }
+        response.status(200).json({success: "succes", data: result})
+        response.end()
+    })
+}); 
+
+ 
+app.get('/user/:id', async (request, response) => {
+    const id = request.params.id;
+    mysqlCon.query(
+        `SELECT
+        u.id,
+        u.name,
+        u.address,
+        SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END) AS balance,
+        SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) AS expense
+        FROM user u
+        LEFT JOIN transaction t ON u.id = t.user_id
+        WHERE u.id = ?
+        GROUP BY u.id;`, [id], (err, result, fields) => {
+            if (err) {
+                console.error(err)
+                response.status(500).json(commonResponse(null, "response error"))
+                response.end()
+                return
+            }
+            if(result.affectedRows !==0) {
+                console.log("transaction connected", result);
+                response.status(200).json(commonResponse(result))
+                response.end()
+            } else{
+                response.status(404).send("user id not found")
+            }
+        }
+    )
+});
+
+app.get('/transaction', (request, response) => {
+    console.log("masuk")
+    mysqlCon.query("select * from transaction", (err, result, fields) => {
+        if (err) {
+            console.error(err)
+            response.status(500).json({err: "server error"})
+            response.end()
+            return
+        }
+        response.status(200).json({success: "succes", data: result})
+        response.end()
+    })
+}); 
+
+app.post('/transaction', async (request, response) => {
+    const {type, amount, user_id} = request.body
+    console.log(request.body);
+    mysqlCon.query(
+        `INSERT INTO transaction 
+        (user_id, type, amount)
+        VALUES(${user_id}, "${type}", ${amount})`,
+        (err, result, fields) => {
+            if(err) {
+                console.error(err)
+                response.status(500).json(commonResponse(null, "response error"))
+                response.end()
+                return
+            }
+            console.log("transaction connected", result);
+            response.status(200).json(commonResponse(result .insertId, null))
+            response.end()
+        }
+    )
+})
+
+app.put('/transaction/:id', async (request, response) => {
+    const id = request.params.id;
+    const {type, amount, user_id} = request.body
+    console.log(request.body)
+    mysqlCon.query(
+        `UPDATE transaction 
+        SET user_id=?, type=?, amount=?
+        WHERE id=?`,[user_id, type, amount, id],
+        (err, result, fields) => {
+            if (err) {
+                console.error(err)
+                response.status(500).json((null, "response error"))
+                response.end()
+                return
+            }
+                console.log("transaction connected", result);
+                response.status(200).json({id: id})
+                response.end()
+        }
+    )
+});
+ 
+app.delete('/transaction/:id', async (request, response) => {
+    const id = request.params.id;
+    mysqlCon.query(
+    `DELETE FROM transaction
+    WHERE id = ?`, [id],
+        (err, result, fields) => {
+            if (err) {
+                console.error(err)
+                response.status(500).json(commonResponse (null, "response error"))
+                response.end()
+                return
+            }
+            if(result.affectedRows !==0){
+                console.log("transaction connected", result);
+                response.status(200).json({id: id})
+                response.end()
+            } else {
+                response.status(404).send("transaction id not found")
+            }
+        }
+)});
+
+
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+    console.log(`Server is running at  http://localhost:${port}`);
 });
