@@ -6,7 +6,7 @@ Before we start to build the server, first you need to download and install Node
 Next, you must download and install MySQL server for database management system on the server.
 
 For the first we create a new connection on mysql server and database mysql on DBeaver.
-![1-create-new-connection database](https://github.com/RevoU-FSSE-2)
+![1-create-new-connection database](https://github.com/RevoU-FSSE-2/week-9-haikalshahab93/blob/main/assets/savekoneksidb.png)
 
 After this lets create a new table on database with DBeaver. We will use a relational model database on the table.
 so for the spesifik you can see this
@@ -216,21 +216,20 @@ app.delete('/transactions/:id', (request, response) => {
 ## Testing Server on Locally
 1. GET users/:id -> for information with current balance and total accumulated expenses (balance = total income - total expense)
 
-![3-get-users-id](https://github.com/RevoU-FSSE-2)
+![3-get-users-id](https://github.com/RevoU-FSSE-2/week-9-haikalshahab93/blob/main/assets/getdatauserid.png)
 
 1. POST /transaction -> for add new transaction
 
-![4-post-transaction-income](https://github.com/RevoU-FSSE-2)
+![4-post-transaction](https://github.com/RevoU-FSSE-2/week-9-haikalshahab93/blob/main/assets/postdata.png)
 
-![5-post-transaction-outcome](https://github.com/RevoU-FSSE-2)
 
 1. PUT /transactions/:id -> for update transaction
 
-![6-put-transaction-id](https://github.com/RevoU-FSSE-2)
+![5-put-transaction-id](https://github.com/RevoU-FSSE-2/week-9-haikalshahab93/blob/main/assets/updatedata.png)
 
 1. DELETE /transactions/:id -> for delete transaction
 
-![7-delete-transaction-id](https://github.com/RevoU-FSSE-2)
+![6-delete-transaction-id](https://github.com/RevoU-FSSE-2/week-9-haikalshahab93/blob/main/assets/deleteimage-tes.png)
 
 ## Deploy
 Database on 
