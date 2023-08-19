@@ -78,6 +78,11 @@ const query = (query, values) => {
 
 app.use(bodyParser.json())
 
+
+app.get("/", (req, res) => {
+    res.send("Selamat Datang Di Tugas Haikal Week 9 ");
+});
+
 app.get('/users', (request, response) => {
     console.log("masuk")
     mysqlCon.query("select * from users", (err, result, fields) => {
