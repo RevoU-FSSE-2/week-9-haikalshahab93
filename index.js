@@ -10,11 +10,11 @@ app.use(bodyParser.json());
 
 // Create a MySQL connection pool
 const dbPool = mysql.createPool({
-  host: "localhost",
-  // port: 3306,
-  user: "unistppl_unisti",
-  password: "Haidar1802",
-  database: "unistppl_revou",
+  host: "containers-us-west-69.railway.app",
+  port: 7223,
+  user: "root",
+  password: "Iqcl5bTZ2ckLd2CuILUg",
+  database: "railway",
 });
 
 // Common Response
