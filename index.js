@@ -84,9 +84,9 @@ const query = (query, values) => {
 
 app.use(bodyParser.json())
 
-app.get('/user', (request, response) => {
+app.get('/users', (request, response) => {
     console.log("masuk")
-    mysqlCon.query("select * from user", (err, result, fields) => {
+    mysqlCon.query("select * from users", (err, result, fields) => {
         if (err) {
             console.error(err)
             response.status(500).json({err: "server error"})
@@ -99,7 +99,7 @@ app.get('/user', (request, response) => {
 }); 
 
  
-app.get('/user/:id', async (request, response) => {
+app.get('/users/:id', async (request, response) => {
     const id = request.params.id;
     mysqlCon.query(
         `SELECT
@@ -109,7 +109,7 @@ app.get('/user/:id', async (request, response) => {
         SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END) AS balance,
         SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) AS expense
         FROM user u
-        LEFT JOIN transaction t ON u.id = t.user_id
+        LEFT JOIN transactions t ON u.id = t.user_id
         WHERE u.id = ?
         GROUP BY u.id;`, [id], (err, result, fields) => {
             if (err) {
@@ -129,9 +129,9 @@ app.get('/user/:id', async (request, response) => {
     )
 });
 
-app.get('/transaction', (request, response) => {
+app.get('/transactions', (request, response) => {
     console.log("masuk")
-    mysqlCon.query("select * from transaction", (err, result, fields) => {
+    mysqlCon.query("select * from transactions", (err, result, fields) => {
         if (err) {
             console.error(err)
             response.status(500).json({err: "server error"})
@@ -143,11 +143,11 @@ app.get('/transaction', (request, response) => {
     })
 }); 
 
-app.post('/transaction', async (request, response) => {
+app.post('/transactions', async (request, response) => {
     const {type, amount, user_id} = request.body
     console.log(request.body);
     mysqlCon.query(
-        `INSERT INTO transaction 
+        `INSERT INTO transactions 
         (user_id, type, amount)
         VALUES(${user_id}, "${type}", ${amount})`,
         (err, result, fields) => {
@@ -164,12 +164,12 @@ app.post('/transaction', async (request, response) => {
     )
 })
 
-app.put('/transaction/:id', async (request, response) => {
+app.put('/transactions/:id', async (request, response) => {
     const id = request.params.id;
     const {type, amount, user_id} = request.body
     console.log(request.body)
     mysqlCon.query(
-        `UPDATE transaction 
+        `UPDATE transactions 
         SET user_id=?, type=?, amount=?
         WHERE id=?`,[user_id, type, amount, id],
         (err, result, fields) => {
@@ -186,10 +186,10 @@ app.put('/transaction/:id', async (request, response) => {
     )
 });
  
-app.delete('/transaction/:id', async (request, response) => {
+app.delete('/transactions/:id', async (request, response) => {
     const id = request.params.id;
     mysqlCon.query(
-    `DELETE FROM transaction
+    `DELETE FROM transactions
     WHERE id = ?`, [id],
         (err, result, fields) => {
             if (err) {
