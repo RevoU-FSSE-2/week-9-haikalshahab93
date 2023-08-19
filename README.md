@@ -234,12 +234,9 @@ app.delete('/transactions/:id', (request, response) => {
 ## Deploy
 Database on 
 
-![Deploy-database](https://github.com/RevoU-FSSE-2/)
+![Link Website]([https://github.com/RevoU-FSSE-2](https://week-9-haikalshahab93-production.up.railway.app/)/)
 
-API on app.cyclic.sh 
+![Deploy-FE Transactions]([https://github.com/RevoU-FSSE-2](https://week-9-haikalshahab93-production.up.railway.app/transactions)https://week-9-haikalshahab93-production.up.railway.app/transactions)
 
-![Deploy-API-1](https://github.com/RevoU-FSSE-2)
+![Deploy-Fe Users]([https://github.com/RevoU-FSSE-2](https://week-9-haikalshahab93-production.up.railway.app/users)https://week-9-haikalshahab93-production.up.railway.app/users)
 
-![Deploy-API-2](https://github.com/RevoU-FSSE-2)
-
-Deploy Link : 
