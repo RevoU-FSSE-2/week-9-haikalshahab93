@@ -107,7 +107,7 @@ app.get('/users/:id', async (request, response) => {
         u.address,
         SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END) AS balance,
         SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) AS expense
-        FROM user u
+        FROM users u
         LEFT JOIN transactions t ON u.id = t.user_id
         WHERE u.id = ?
         GROUP BY u.id;`, [id], (err, result, fields) => {
